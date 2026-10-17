@@ -32,6 +32,8 @@ export type DeskObject = {
   blurb: string;
   /** Window id the object opens. */
   opens: string;
+  /** Show the document itself on the desk card, so a click gives the answer without booting. */
+  inline?: boolean;
 };
 
 export type Block =
@@ -252,8 +254,8 @@ export const site = {
     { id: "headphones", label: "Hue", blurb: "Hue turns whatever you are listening to into colour.", opens: "project:hue" },
     { id: "notebook", label: "Field notes", blurb: "Field notes: small things worth knowing.", opens: "notes" },
     { id: "binoculars", label: "Scout", blurb: "Scout watches for internships so I do not have to.", opens: "project:scout" },
-    { id: "note", label: "Contact", blurb: "Say hello. Email is fastest.", opens: "contact" },
-    { id: "note2", label: "Socials", blurb: "GitHub, LinkedIn and Instagram in one place.", opens: "socials" },
+    { id: "note", label: "Contact", blurb: "Say hello. Email is fastest.", opens: "contact", inline: true },
+    { id: "note2", label: "Socials", blurb: "GitHub, LinkedIn and Instagram in one place.", opens: "socials", inline: true },
     { id: "envelope", label: "Iris", blurb: "Iris sorts a flooded Gmail inbox into a calm brief.", opens: "project:iris" },
     { id: "walkie", label: "Echo", blurb: "Echo is chat that needs no sign-up and no server.", opens: "project:echo" },
   ] satisfies DeskObject[],

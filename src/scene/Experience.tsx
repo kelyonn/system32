@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { site } from "@/data/site";
 import { OS } from "@/os/OS";
+import { DocView } from "@/components/DocView";
 import { sound, setSoundEnabled, getSoundEnabled } from "@/os/sound";
 import type { Phase } from "./Scene";
 import { LIGHTS, LIGHT_MODES, type LightMode } from "./lights";
@@ -123,6 +124,7 @@ export function Experience() {
   const stage: 0 | 1 | 2 = phase === "intro" || phase === "retreat" || phase === "camera" ? 0 : phase === "zooming" || phase === "booting" || phase === "os" ? 2 : 1;
   const voidColors = LIGHTS[light].voidColors;
   const picked = site.deskObjects.find((o) => o.id === card);
+  const inlineDoc = picked?.inline ? site.docs.find((d) => d.id === picked.opens) : undefined;
 
   return (
     <>
@@ -241,9 +243,13 @@ export function Experience() {
       {picked && phase === "desk" && (
         <div className="card" role="dialog" aria-label={picked.label}>
           <b>{picked.label}</b>
-          <p>{picked.blurb}</p>
+          {picked.inline && inlineDoc ? (
+            <div className="card-doc"><DocView blocks={inlineDoc.blocks} /></div>
+          ) : (
+            <p>{picked.blurb}</p>
+          )}
           <div>
-            <button className="chip" onClick={() => boot(picked.opens)}>Boot and open</button>
+            {!picked.inline && <button className="chip" onClick={() => boot(picked.opens)}>Boot and open</button>}
             <button className="chip" onClick={() => { sound.click(); setCard(null); }}>Close</button>
           </div>
         </div>
