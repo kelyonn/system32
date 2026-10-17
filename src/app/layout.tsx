@@ -3,13 +3,14 @@ import { fontVars } from "./fonts";
 import { site } from "@/data/site";
 import "./globals.css";
 
-const url = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kelyonn.github.io/system32";
+const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kelyonn.github.io";
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const url = `${origin}${base}/`;
 const title = `${site.person.name} | Backend and systems engineer`;
 const description = `${site.person.name}, ${site.person.role}. Container runtimes, GitOps tooling and small tools for real problems. Explore the desk.`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(url),
+  metadataBase: new URL(origin),
   title,
   description,
   openGraph: { title, description, url, siteName: site.osName, type: "website", images: [{ url: `${base}/og.png`, width: 1200, height: 630 }] },

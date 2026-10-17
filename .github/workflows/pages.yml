@@ -28,7 +28,7 @@ jobs:
         env:
           # Empty when a custom domain points at the site; "/system32" for the github.io project URL.
           NEXT_PUBLIC_BASE_PATH: ${{ vars.CUSTOM_DOMAIN && '' || '/system32' }}
-          NEXT_PUBLIC_SITE_URL: ${{ vars.CUSTOM_DOMAIN && format('https://{0}', vars.CUSTOM_DOMAIN) || 'https://kelyonn.github.io/system32' }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.CUSTOM_DOMAIN && format('https://{0}', vars.CUSTOM_DOMAIN) || 'https://kelyonn.github.io' }}
         run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
