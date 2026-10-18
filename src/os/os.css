@@ -17,11 +17,13 @@
 .drop { position: absolute; top: 100%; left: 0; background: var(--paper); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); min-width: 140px; white-space: pre; }
 .drop button { display: block; width: 100%; height: 26px; }
 
-.icons { list-style: none; margin: 0; padding: 0; position: absolute; top: 40px; left: 16px; display: grid; grid-template-rows: repeat(5, auto); grid-auto-flow: column; gap: 10px 6px; justify-items: center; z-index: 1; }
+.icons { list-style: none; margin: 0; padding: 0; position: absolute; top: 40px; bottom: 40px; right: 16px; direction: rtl; display: flex; flex-flow: column wrap; align-content: flex-start; gap: 10px 6px; z-index: 1; }
 .sep { padding: 4px 14px; font-family: var(--f-silkscreen), monospace; font-size: 10px; border-bottom: 2px solid var(--ink); background: var(--ink); color: var(--paper); }
 .doc-h { font-family: var(--f-silkscreen), monospace; font-size: 11px; font-weight: 400; margin: 12px 0 4px; border-bottom: 2px dotted var(--ink); }
 .doc-li, .doc-links { margin: 4px 0 10px; padding-left: 18px; }
-.icons button { display: grid; justify-items: center; gap: 4px; width: 92px; padding: 4px; background: transparent; text-align: center; }
+.icons li { width: 112px; }
+.icons button { display: grid; direction: ltr; justify-items: center; gap: 4px; width: 100%; padding: 4px 0; background: transparent; color: var(--ink); text-align: center; white-space: nowrap; }
+.os .icons button:hover:not(.close):not(.row):not(.term-link), .os .icons button:focus-visible { background: transparent; color: var(--ink); }
 .icons .lbl { background: var(--paper); padding: 0 4px; }
 .icons button:hover .lbl, .icons button:focus-visible .lbl { background: var(--ink); color: var(--paper); }
 .ico { width: 32px; height: 32px; border: 2px solid var(--ink); background: var(--paper); box-shadow: 2px 2px 0 var(--ink); position: relative; }
