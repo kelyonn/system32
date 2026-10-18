@@ -440,6 +440,24 @@ fold = [
 ]
 join(fold, "folder")
 
+# Pill bottle with two loose pills. Opens the Capstone project.
+pb_amber = mat("pb_amber", "#B9742A", 0.35)
+pb_cap = mat("pb_cap", "#EDE9DD", 0.5)
+pb_label = mat("pb_label", "#F1EEE4", 0.9)
+pb_pill = mat("pb_pill", "#F6F3EA", 0.4)
+pb_pill2 = mat("pb_pill2", "#C95A49", 0.4)
+bottle = [
+    cyl(0.018, 0.018, 0.07, (0, 0.035, 0), pb_amber, verts=32),
+    cyl(0.0196, 0.0196, 0.016, (0, 0.078, 0), pb_cap, verts=32),
+    cyl(0.0184, 0.0184, 0.036, (0, 0.036, 0), pb_label, verts=32),
+    box((0.022, 0.0032, 0.0012), (0, 0.047, 0.0184), ink),
+    box((0.016, 0.0022, 0.0012), (0, 0.040, 0.0184), ink),
+    box((0.018, 0.0022, 0.0012), (0, 0.025, 0.0184), ink),
+    cyl(0.0038, 0.0038, 0.011, (0.038, 0.0038, 0.012), pb_pill, rot=(0, 0, math.pi / 2), verts=16),
+    cyl(0.0038, 0.0038, 0.011, (0.05, 0.0038, -0.004), pb_pill2, rot=(math.pi / 2, 0, 0), verts=16),
+]
+join(bottle, "capstone")
+
 # Walkie-talkie, standing
 wk_body = mat("wk_body", "#2E2E30", 0.5)
 wk_acc = mat("wk_acc", "#B8683A", 0.45)
@@ -568,6 +586,7 @@ PLACE = {  # mirrors src/scene/layout.ts
     "envelope": ((-0.21, 0.0, 0.52), -0.3),
     "walkie": ((0.66, 0.0, -0.16), 0.35),
     "folder": ((0.50, 0.0, 0.26), -0.2),
+    "capstone": ((0.04, 0.0, 0.52), 0.3),
     "clock": ((-0.32, 0.0, -0.05), 0.25),
     "plant": ((0.76, 0.0, -0.30), 0.0),
     "pencup": ((0.24, 0.0, -0.26), 0.0),
@@ -661,7 +680,7 @@ fur_obj.select_set(False)
 TILES = {
     "Computer": (0, 0, 4), "camera": (4, 0, 2), "notebook": (6, 0, 2), "mug": (4, 2, 2), "Lamp": (6, 2, 2),
     "headphones": (0, 4, 2), "corkboard": (2, 4, 2), "walkie": (4, 4, 2), "plant": (6, 4, 2),
-    "note": (0, 6, 1), "note2": (1, 6, 1), "envelope": (0, 7, 1), "clock": (1, 7, 1), "folder": (2, 7, 1), "binoculars": (2, 6, 1), "pencup": (3, 6, 1),
+    "note": (0, 6, 1), "note2": (1, 6, 1), "envelope": (0, 7, 1), "clock": (1, 7, 1), "folder": (2, 7, 1), "capstone": (3, 7, 1), "binoculars": (2, 6, 1), "pencup": (3, 6, 1),
 }
 for nm, (cx, cy, cs) in TILES.items():
     o = bpy.data.objects[nm]

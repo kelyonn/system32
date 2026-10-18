@@ -145,9 +145,11 @@ export function Experience() {
       />
 
       {phase !== "booting" && phase !== "os" && (
-        <div className="hud">
-          <span>{site.person.name}</span>
-          <span>{site.person.tagline}</span>
+        <aside className="hud" aria-label="About">
+          <p className="hud-kicker">{site.person.handle} / {site.osName}</p>
+          <h1 className="hud-name">{site.person.name}</h1>
+          <p className="hud-tag">{site.person.tagline}</p>
+          <p className="hud-status"><span className="hud-dot" aria-hidden />{site.person.status}</p>
           <div className="hud-row">
             <span className="hud-clock" suppressHydrationWarning>{clock || "--:--:--"}</span>
             <button
@@ -159,7 +161,7 @@ export function Experience() {
               <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden><path d="M2 6h3l4-3v10L5 10H2z" fill="currentColor" />{snd ? <path d="M11 5.5c1.3 1.4 1.3 3.6 0 5M12.8 3.8c2.2 2.4 2.2 6.2 0 8.6" stroke="currentColor" fill="none" strokeWidth="1.2" /> : <path d="M11 6l4 4M15 6l-4 4" stroke="currentColor" strokeWidth="1.2" />}</svg>
             </button>
           </div>
-        </div>
+        </aside>
       )}
 
       {(phase === "desk" || phase === "zooming" || phase === "approach" || phase === "explore" || phase === "retreat") && <div className="grain" aria-hidden />}
