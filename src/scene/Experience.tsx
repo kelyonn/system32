@@ -31,18 +31,16 @@ function BootLog({ fast }: { fast: boolean }) {
 
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
 
-/** Phones, tiny screens, low-memory devices and no-WebGL browsers get the simple view. */
+/** Low-memory devices and no-WebGL browsers get the simple view. Phones get the full desk. */
 function shouldSkip3D(): boolean {
   if (typeof window === "undefined") return false;
   const nav = navigator as Navigator & { deviceMemory?: number };
-  const coarse = window.matchMedia("(pointer: coarse)").matches;
-  const narrow = window.innerWidth < 768;
   const weak = (nav.deviceMemory ?? 8) <= 2 || (navigator.hardwareConcurrency ?? 8) <= 2;
   let gl = false;
   try {
     gl = !!document.createElement("canvas").getContext("webgl2");
   } catch {}
-  return !gl || weak || (coarse && narrow);
+  return !gl || weak;
 }
 
 export function Experience() {
@@ -196,11 +194,11 @@ export function Experience() {
         </div>
       )}
 
-      {phase === "explore" && <p className="cam-hint" aria-live="polite">Drag to look around. Scroll to zoom. Click the desk to move in.</p>}
+      {phase === "explore" && <p className="cam-hint" aria-live="polite"><span className="h-mouse">Drag to look around. Scroll to zoom. Click the desk to move in.</span><span className="h-touch">Drag to look around. Pinch to zoom. Tap the desk to move in.</span></p>}
 
       {phase === "desk" && (
         <>
-          <button className="chip hint" onClick={() => boot()}>Click the computer to boot</button>
+          <button className="chip hint" onClick={() => boot()}><span className="h-mouse">Click the computer to boot</span><span className="h-touch">Tap the computer to boot</span></button>
           <button className="chip back-btn" onClick={leaveDesk}>Back to room</button>
         </>
       )}

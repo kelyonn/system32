@@ -190,7 +190,7 @@ export function OS({ onShutdown, initialMode = "desktop", initialOpen }: { onShu
             </div>
           )}
         </div>
-        <button onClick={() => { const n = !snd; setSoundEnabled(n); setSnd(n); if (n) sound.click(); }}>
+        <button className="snd-btn" onClick={() => { const n = !snd; setSoundEnabled(n); setSnd(n); if (n) sound.click(); }}>
           Sound: {snd ? "on" : "off"}
         </button>
         <span className="spacer" />

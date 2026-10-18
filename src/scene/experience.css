@@ -57,3 +57,23 @@ body canvas { filter: contrast(1.04) saturate(1.05); }
 .hud-clock { font-size: 11px; align-self: center; opacity: 0.75; }
 .hud-btn { background: transparent; color: #1c1b19; border: 2px solid #1c1b19; padding: 3px 7px; cursor: pointer; display: grid; place-items: center; }
 .hud-btn:hover, .hud-btn:focus-visible { background: #1c1b19; color: #efeadc; outline: none; }
+
+/* Phones */
+@media (max-width: 700px) {
+  .hud { top: 10px; left: 10px; width: calc(100vw - 172px); padding: 10px 12px 9px; }
+  .hud-kicker, .hud-status { display: none; }
+  .hud-name { font-size: 19px; }
+  .hud-tag { font-size: 15px; margin-top: 4px; }
+  .hud-row { margin-top: 8px; }
+  .lightmenu { top: 10px; right: 10px; }
+  .cam-hint { bottom: 64px; width: calc(100vw - 32px); text-align: center; font-size: 12px; }
+  .hint { bottom: 60px; }
+  .simple-btn { left: 12px; bottom: 12px; }
+  .back-btn { left: auto; right: 12px; bottom: 12px; }
+  .kb { clip-path: none; width: auto; height: auto; overflow-x: auto; overflow-y: hidden; top: auto; bottom: 104px; left: 8px; right: 8px; gap: 6px; padding: 2px 2px 6px; -webkit-overflow-scrolling: touch; }
+  .kb li { flex: none; }
+  .card { bottom: 150px; }
+}
+
+.h-touch { display: none; }
+@media (pointer: coarse) { .h-mouse { display: none; } .h-touch { display: inline; } }

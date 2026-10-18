@@ -149,6 +149,20 @@ function CameraRig({ stage, orbit, instant, onArrive }: { stage: 0 | 1 | 2; orbi
   const pos = useMemo(() => new THREE.Vector3(), []);
   const end = useMemo(() => new THREE.Vector3(), []);
   const wide = useRef(WIDE.clone());
+  const home = useMemo(() => new THREE.Vector3(), []);
+  const target = useMemo(() => new THREE.Vector3(...ORBIT_TARGET), []);
+  // Portrait screens (phones) pull the camera back so the desk still fits across the narrow width.
+  const aspectNow = size.width / size.height;
+  const fitWide = Math.min(2, Math.max(1, 1.2 / aspectNow));
+  const fitHome = Math.min(2.3, Math.max(1, 1.0 / aspectNow));
+  const prevFit = useRef(1);
+  useEffect(() => {
+    const ratio = fitWide / prevFit.current;
+    prevFit.current = fitWide;
+    if (ratio === 1) return;
+    wide.current.sub(target).multiplyScalar(ratio).add(target);
+    if (t.current === 0) camera.position.copy(wide.current);
+  }, [fitWide, camera, target]);
   useEffect(() => {
     moving.current = true;
   }, [stage]);
@@ -185,11 +199,13 @@ function CameraRig({ stage, orbit, instant, onArrive }: { stage: 0 | 1 | 2; orbi
 
     if (t.current <= 1) {
       const e = easeInOutCubic(t.current);
-      pos.lerpVectors(wide.current, HOME, e);
+      home.set(HOME.x, HOME.y + (fitHome - 1) * 0.1, HOME.z * fitHome);
+      pos.lerpVectors(wide.current, home, e);
       look.lerpVectors(WIDE_LOOK, HOME_LOOK, e);
     } else {
       const e = easeInOutCubic(t.current - 1);
-      pos.lerpVectors(HOME, end, e);
+      home.set(HOME.x, HOME.y + (fitHome - 1) * 0.1, HOME.z * fitHome);
+      pos.lerpVectors(home, end, e);
       look.lerpVectors(HOME_LOOK, SCREEN, e);
     }
 
@@ -217,7 +233,7 @@ function CameraRig({ stage, orbit, instant, onArrive }: { stage: 0 | 1 | 2; orbi
       rotateSpeed={0.9}
       zoomSpeed={0.6}
       minDistance={1.9}
-      maxDistance={7.5}
+      maxDistance={7.5 * fitWide}
       minPolarAngle={0.2}
       maxPolarAngle={1.5}
     />
@@ -480,7 +496,7 @@ export default function Scene(props: SceneProps) {
   return (
     <Canvas
       frameloop={props.phase === "os" ? "never" : "always"}
-      dpr={[1, 2]}
+      dpr={[1, typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches ? 1.5 : 2]}
       camera={{ fov: 35, position: WIDE.toArray(), near: 0.05, far: 40 }}
       gl={{ antialias: true, alpha: true }}
       style={{ position: "fixed", inset: 0 }}

@@ -67,6 +67,14 @@ export function reducer(s: State, a: Action): State {
       // Windows open 25 percent larger than their base size, but never bigger than the screen.
       const [w, h] = a.at ? [a.at.w, a.at.h] : [Math.min(Math.round(base[0] * OPEN_SCALE), vw - 16), Math.min(Math.round(base[1] * OPEN_SCALE), vh - 44)];
       const n = s.wins.length;
+      // Phones: windows take the screen width and stack just below the menu bar.
+      if (!a.at && vw < 700) {
+        const pw = vw - 16;
+        const ph = Math.min(vh - 56, Math.round(base[1] * OPEN_SCALE * 1.4));
+        const py = 32 + (n % 4) * 12;
+        const mw: Win = { id: a.id, title: titleFor(a.id), x: 8, y: Math.min(py, Math.max(32, vh - ph - 12)), w: pw, h: ph, z, rolled: false };
+        return { wins: [...s.wins, mw], zTop: z, focus: a.id };
+      }
       // Keep new windows fully on screen (below the icon rows when there is room).
       const x0 = a.at ? a.at.x : 120 + (n % 6) * 28;
       const y0 = a.at ? a.at.y : 230 + (n % 6) * 24;
