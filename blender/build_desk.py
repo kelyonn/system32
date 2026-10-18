@@ -428,6 +428,18 @@ env = [
 ]
 join(env, "envelope")
 
+# Manila folder, lying flat. Opens the resume.
+fd = mat("folder", "#C6A768", 0.85)
+fd_label = mat("folder_label", "#EFEADC", 0.9)
+fold = [
+    box((0.17, 0.004, 0.12), (0, 0.002, 0), fd, 0.0008),
+    box((0.055, 0.004, 0.012), (-0.045, 0.002, -0.066), fd, 0.0008),
+    box((0.17, 0.0006, 0.0012), (0, 0.0043, -0.052), mat("folder_crease", "#A98C52", 0.9)),
+    box((0.045, 0.0007, 0.0085), (-0.045, 0.0044, -0.066), fd_label),
+    box((0.03, 0.0008, 0.0025), (-0.045, 0.0046, -0.066), ink),
+]
+join(fold, "folder")
+
 # Walkie-talkie, standing
 wk_body = mat("wk_body", "#2E2E30", 0.5)
 wk_acc = mat("wk_acc", "#B8683A", 0.45)
@@ -555,6 +567,7 @@ PLACE = {  # mirrors src/scene/layout.ts
     "note2": ((0.45, 0.14, -0.389), 0.0),
     "envelope": ((-0.21, 0.0, 0.52), -0.3),
     "walkie": ((0.66, 0.0, -0.16), 0.35),
+    "folder": ((0.50, 0.0, 0.26), -0.2),
     "clock": ((-0.32, 0.0, -0.05), 0.25),
     "plant": ((0.76, 0.0, -0.30), 0.0),
     "pencup": ((0.24, 0.0, -0.26), 0.0),
@@ -648,7 +661,7 @@ fur_obj.select_set(False)
 TILES = {
     "Computer": (0, 0, 4), "camera": (4, 0, 2), "notebook": (6, 0, 2), "mug": (4, 2, 2), "Lamp": (6, 2, 2),
     "headphones": (0, 4, 2), "corkboard": (2, 4, 2), "walkie": (4, 4, 2), "plant": (6, 4, 2),
-    "note": (0, 6, 1), "note2": (1, 6, 1), "envelope": (0, 7, 1), "clock": (1, 7, 1), "binoculars": (2, 6, 1), "pencup": (3, 6, 1),
+    "note": (0, 6, 1), "note2": (1, 6, 1), "envelope": (0, 7, 1), "clock": (1, 7, 1), "folder": (2, 7, 1), "binoculars": (2, 6, 1), "pencup": (3, 6, 1),
 }
 for nm, (cx, cy, cs) in TILES.items():
     o = bpy.data.objects[nm]

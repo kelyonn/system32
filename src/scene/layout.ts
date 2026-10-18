@@ -11,6 +11,7 @@ export const SPOTS: Record<string, Spot> = {
   note2: { pos: [0.45, 0.14, -0.389] },
   envelope: { pos: [-0.21, 0, 0.52], rot: [0, -0.3, 0] },
   walkie: { pos: [0.66, 0, -0.16], rot: [0, 0.35, 0] },
+  folder: { pos: [0.5, 0, 0.26], rot: [0, -0.2, 0] },
 };
 
 /** Models that are decoration only. */
