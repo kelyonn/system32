@@ -140,8 +140,8 @@ const ORBIT_TARGET: [number, number, number] = [0, -0.34, 0.12];
  * Owns the camera between stages. On stage 0 the visitor can orbit freely (OrbitControls), and the
  * rig only takes over to tween: the wide pose is wherever the orbit left the camera.
  */
-function CameraRig({ stage, orbit, instant, onArrive, onBackdropClick }: { stage: 0 | 1 | 2; orbit: boolean; instant: boolean; onArrive: (stage: number) => void; onBackdropClick: () => void }) {
-  const { camera, pointer, size, gl } = useThree();
+function CameraRig({ stage, orbit, instant, onArrive }: { stage: 0 | 1 | 2; orbit: boolean; instant: boolean; onArrive: (stage: number) => void }) {
+  const { camera, pointer, size } = useThree();
   const t = useRef<number>(stage);
   const moving = useRef(false);
   const par = useRef(new THREE.Vector2());
@@ -149,30 +149,9 @@ function CameraRig({ stage, orbit, instant, onArrive, onBackdropClick }: { stage
   const pos = useMemo(() => new THREE.Vector3(), []);
   const end = useMemo(() => new THREE.Vector3(), []);
   const wide = useRef(WIDE.clone());
-  const stageRef = useRef(stage);
   useEffect(() => {
-    stageRef.current = stage;
     moving.current = true;
   }, [stage]);
-
-  // A click that is not a drag, while on the wide shot, begins the experience.
-  useEffect(() => {
-    const el = gl.domElement;
-    let down: [number, number] | null = null;
-    const onDown = (e: PointerEvent) => { down = [e.clientX, e.clientY]; };
-    const onUp = (e: PointerEvent) => {
-      if (!down) return;
-      const moved = Math.hypot(e.clientX - down[0], e.clientY - down[1]);
-      down = null;
-      if (moved < 6 && stageRef.current === 0) onBackdropClick();
-    };
-    el.addEventListener("pointerdown", onDown);
-    el.addEventListener("pointerup", onUp);
-    return () => {
-      el.removeEventListener("pointerdown", onDown);
-      el.removeEventListener("pointerup", onUp);
-    };
-  }, [gl, onBackdropClick]);
 
   const marked = useRef(false);
   useFrame((_, dt) => {
@@ -343,7 +322,7 @@ function Computer({ onBoot, enabled }: { onBoot: () => void; enabled: boolean })
   return (
     <group
       onPointerOver={(e) => { if (!enabled) return; e.stopPropagation(); setHot(true); document.body.style.cursor = "pointer"; }}
-      onPointerOut={() => { setHot(false); document.body.style.cursor = ""; }}
+      onPointerOut={() => { if (!enabled) return; setHot(false); document.body.style.cursor = ""; }}
       onClick={(e) => { if (!enabled) return; e.stopPropagation(); onBoot(); }}
     >
       <Model name="Computer" />
@@ -384,7 +363,7 @@ function Interactive({ id, label, position, rotation, enabled, onPick, children 
       position={position}
       rotation={rotation}
       onPointerOver={(e) => { if (!enabled) return; e.stopPropagation(); setHot(true); document.body.style.cursor = "pointer"; }}
-      onPointerOut={() => { setHot(false); document.body.style.cursor = ""; }}
+      onPointerOut={() => { if (!enabled) return; setHot(false); document.body.style.cursor = ""; }}
       onClick={(e) => { if (!enabled) return; e.stopPropagation(); onPick(id); }}
     >
       {children}
@@ -439,23 +418,30 @@ function Lamp({ glow }: { glow: boolean }) {
   );
 }
 
-function World({ phase, light, stage, orbit, onBoot, onPick, instant, onArrive, onBackdropClick }: SceneProps) {
+function World({ phase, light, stage, orbit, onBoot, onPick, instant, onArrive, onEnterDesk }: SceneProps) {
   const live = phase === "desk";
   const L = LIGHTS[light];
+  const { nodes } = useGLTF(MODEL_URL);
   return (
     <>
       <Skins light={light} />
-      <Model name="Desk" />
       <Model name="Furniture" />
       <Model name="Floor" />
 
+      {/* While exploring, clicking anything on the desk (not a drag) pulls the camera in. */}
+      <group
+        onPointerOver={(e) => { if (phase !== "explore") return; e.stopPropagation(); document.body.style.cursor = "pointer"; }}
+        onPointerOut={() => { if (phase === "explore") document.body.style.cursor = ""; }}
+        onClick={(e) => { if (phase !== "explore" || e.delta > 6) return; e.stopPropagation(); document.body.style.cursor = ""; onEnterDesk(); }}
+      >
+      <Model name="Desk" />
       <Lamp glow={L.glow} />
       <Computer onBoot={onBoot} enabled={live} />
 
       {/* desk objects, data-driven from site.deskObjects */}
       {site.deskObjects.map((o) => {
         const spot = SPOTS[o.id];
-        if (!spot) return null;
+        if (!spot || !nodes[o.id]) return null; // skip props the baked model does not contain yet
         return (
           <Interactive key={o.id} id={o.id} label={o.label} position={spot.pos} rotation={spot.rot} enabled={live} onPick={onPick}>
             <Model name={o.id} />
@@ -469,24 +455,25 @@ function World({ phase, light, stage, orbit, onBoot, onPick, instant, onArrive, 
           {id === "clock" && <ClockFace />}
         </group>
       ))}
+      </group>
 
-      <CameraRig stage={stage} orbit={orbit} instant={instant} onArrive={onArrive} onBackdropClick={onBackdropClick} />
+      <CameraRig stage={stage} orbit={orbit} instant={instant} onArrive={onArrive} />
     </>
   );
 }
 
-export type Phase = "intro" | "approach" | "desk" | "retreat" | "camera" | "zooming" | "booting" | "os" | "leaving";
+export type Phase = "explore" | "approach" | "desk" | "retreat" | "zooming" | "booting" | "os" | "leaving";
 export type SceneProps = {
   phase: Phase;
   light: LightMode;
   stage: 0 | 1 | 2;
-  /** Camera mode: free orbit around the desk. */
+  /** Free orbit around the room. */
   orbit: boolean;
   instant: boolean;
   onBoot: () => void;
   onPick: (id: string) => void;
   onArrive: (stage: number) => void;
-  onBackdropClick: () => void;
+  onEnterDesk: () => void;
 };
 
 export default function Scene(props: SceneProps) {

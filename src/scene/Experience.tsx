@@ -48,7 +48,7 @@ function shouldSkip3D(): boolean {
 export function Experience() {
   const router = useRouter();
   const force = useSearchParams().has("desk");
-  const [phase, setPhase] = useState<Phase>("intro");
+  const [phase, setPhase] = useState<Phase>("explore");
   const [reduced] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [card, setCard] = useState<string | null>(null);
   const [initialOpen, setInitialOpen] = useState<string | undefined>();
@@ -75,24 +75,22 @@ export function Experience() {
     setPhase("zooming");
   }, []);
 
-  const begin = useCallback(() => {
+  // Free look around the room; clicking the desk pulls the camera in.
+  const enterDesk = useCallback(() => {
     setPhase((p) => {
-      if (p !== "intro") return p;
+      if (p !== "explore") return p;
       sound.click();
       return "approach";
     });
   }, []);
-
-  // Two modes, like a real viewer: cursor mode sits at the desk where everything is clickable;
-  // camera mode pulls back and lets you drag to orbit and scroll to zoom.
-  const setMode = useCallback((m: "cursor" | "camera") => {
+  const leaveDesk = useCallback(() => {
     setPhase((p) => {
-      if (m === "camera" && p === "desk") { sound.click(); setCard(null); return "retreat"; }
-      if (m === "cursor" && p === "camera") { sound.click(); return "approach"; }
-      return p;
+      if (p !== "desk") return p;
+      sound.click();
+      setCard(null);
+      return "retreat";
     });
   }, []);
-  const mode: "cursor" | "camera" = phase === "camera" || phase === "retreat" ? "camera" : "cursor";
   const [lightOpen, setLightOpen] = useState(false);
   useEffect(() => {
     if (!lightOpen) return;
@@ -106,7 +104,7 @@ export function Experience() {
   const onArrive = useCallback((stage: number) => {
     setPhase((p) => {
       if (stage === 1 && (p === "approach" || p === "leaving")) return "desk";
-      if (stage === 0 && p === "retreat") return "camera";
+      if (stage === 0 && p === "retreat") return "explore";
       if (stage === 2 && p === "zooming") {
         sound.chime();
         return "booting";
@@ -121,7 +119,7 @@ export function Experience() {
     return () => clearTimeout(t);
   }, [phase, reduced]);
 
-  const stage: 0 | 1 | 2 = phase === "intro" || phase === "retreat" || phase === "camera" ? 0 : phase === "zooming" || phase === "booting" || phase === "os" ? 2 : 1;
+  const stage: 0 | 1 | 2 = phase === "explore" || phase === "retreat" ? 0 : phase === "zooming" || phase === "booting" || phase === "os" ? 2 : 1;
   const voidColors = LIGHTS[light].voidColors;
   const picked = site.deskObjects.find((o) => o.id === card);
   const inlineDoc = picked?.inline ? site.docs.find((d) => d.id === picked.opens) : undefined;
@@ -138,24 +136,18 @@ export function Experience() {
         phase={phase}
         light={light}
         stage={stage}
-        orbit={phase === "camera"}
+        orbit={phase === "explore"}
         instant={reduced}
         onBoot={() => boot()}
         onPick={(id) => { sound.click(); setCard(id); }}
         onArrive={onArrive}
-        onBackdropClick={begin}
+        onEnterDesk={enterDesk}
       />
 
-      {phase === "intro" && (
-        <button className="intro-label" onClick={begin}>
-          Click anywhere to begin<span className="caret">_</span>
-        </button>
-      )}
-
-      {phase !== "intro" && phase !== "booting" && phase !== "os" && (
+      {phase !== "booting" && phase !== "os" && (
         <div className="hud">
           <span>{site.person.name}</span>
-          <span>Software engineer</span>
+          <span>{site.person.tagline}</span>
           <div className="hud-row">
             <span className="hud-clock" suppressHydrationWarning>{clock || "--:--:--"}</span>
             <button
@@ -166,33 +158,13 @@ export function Experience() {
             >
               <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden><path d="M2 6h3l4-3v10L5 10H2z" fill="currentColor" />{snd ? <path d="M11 5.5c1.3 1.4 1.3 3.6 0 5M12.8 3.8c2.2 2.4 2.2 6.2 0 8.6" stroke="currentColor" fill="none" strokeWidth="1.2" /> : <path d="M11 6l4 4M15 6l-4 4" stroke="currentColor" strokeWidth="1.2" />}</svg>
             </button>
-            <div className="hud-modes" role="group" aria-label="View mode">
-              <button
-                className="hud-btn"
-                aria-pressed={mode === "cursor"}
-                title="Cursor mode: click things on the desk"
-                aria-label="Cursor mode"
-                onClick={() => setMode("cursor")}
-              >
-                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden><path d="M3 1l9 8H8l2 5-2 1-2-5-3 3z" fill="currentColor" /></svg>
-              </button>
-              <button
-                className="hud-btn"
-                aria-pressed={mode === "camera"}
-                title="Camera mode: drag to look around, scroll to zoom"
-                aria-label="Camera mode"
-                onClick={() => setMode("camera")}
-              >
-                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden><path d="M1 5h3l1-2h6l1 2h3v8H1z" fill="none" stroke="currentColor" strokeWidth="1.3" /><circle cx="8" cy="9" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>
-              </button>
-            </div>
           </div>
         </div>
       )}
 
-      {(phase === "desk" || phase === "zooming" || phase === "approach" || phase === "intro") && <div className="grain" aria-hidden />}
+      {(phase === "desk" || phase === "zooming" || phase === "approach" || phase === "explore" || phase === "retreat") && <div className="grain" aria-hidden />}
 
-      {(phase === "desk" || phase === "zooming" || phase === "approach" || phase === "intro") && (
+      {(phase === "desk" || phase === "zooming" || phase === "approach" || phase === "explore" || phase === "retreat") && (
         <div className="vignette" style={{ ["--v" as string]: LIGHTS[light].vignette }} aria-hidden />
       )}
 
@@ -222,11 +194,12 @@ export function Experience() {
         </div>
       )}
 
-      {phase === "camera" && <p className="cam-hint" aria-live="polite">Drag to look around. Scroll to zoom.</p>}
+      {phase === "explore" && <p className="cam-hint" aria-live="polite">Drag to look around. Scroll to zoom. Click the desk to move in.</p>}
 
       {phase === "desk" && (
         <>
           <button className="chip hint" onClick={() => boot()}>Click the computer to boot</button>
+          <button className="chip back-btn" onClick={leaveDesk}>Back to room</button>
         </>
       )}
 
