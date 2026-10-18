@@ -20,6 +20,7 @@ export type Action =
   | { t: "close"; id: WinKind }
   | { t: "focus"; id: WinKind }
   | { t: "move"; id: WinKind; x: number; y: number }
+  | { t: "resize"; id: WinKind; w: number; h: number }
   | { t: "roll"; id: WinKind }
   | { t: "reset" };
 
@@ -32,6 +33,10 @@ export function titleFor(id: WinKind): string {
   if (d) return d.title;
   return ({ projects: "Projects", resume: "Resume", terminal: "Terminal", trash: "Trash" } as Record<string, string>)[id] ?? id;
 }
+
+const OPEN_SCALE = 1.25;
+export const MIN_W = 260;
+export const MIN_H = 140;
 
 const SIZES: Record<string, [number, number]> = {
   projects: [420, 340],
@@ -56,10 +61,12 @@ export function reducer(s: State, a: Action): State {
         return { ...s, zTop: z, focus: a.id, wins: s.wins.map((w) => (w.id === a.id ? { ...w, z, rolled: false } : w)) };
       }
       const hasDemo = a.id.startsWith("project:") && site.projects.some((p) => p.id === a.id.slice(8) && "demo" in p);
-      const [w, h] = a.at ? [a.at.w, a.at.h] : a.big ? [760, 460] : hasDemo ? [620, 560] : SIZES[a.id] ?? [440, 340];
-      const n = s.wins.length;
       const vw = typeof window === "undefined" ? 1280 : window.innerWidth;
       const vh = typeof window === "undefined" ? 800 : window.innerHeight;
+      const base = a.big ? [760, 460] : hasDemo ? [620, 560] : SIZES[a.id] ?? [440, 340];
+      // Windows open 25 percent larger than their base size, but never bigger than the screen.
+      const [w, h] = a.at ? [a.at.w, a.at.h] : [Math.min(Math.round(base[0] * OPEN_SCALE), vw - 16), Math.min(Math.round(base[1] * OPEN_SCALE), vh - 44)];
+      const n = s.wins.length;
       // Keep new windows fully on screen (below the icon rows when there is room).
       const x0 = a.at ? a.at.x : 120 + (n % 6) * 28;
       const y0 = a.at ? a.at.y : 230 + (n % 6) * 24;
@@ -80,6 +87,8 @@ export function reducer(s: State, a: Action): State {
     }
     case "move":
       return { ...s, wins: s.wins.map((w) => (w.id === a.id ? { ...w, x: a.x, y: a.y } : w)) };
+    case "resize":
+      return { ...s, wins: s.wins.map((w) => (w.id === a.id ? { ...w, w: Math.max(MIN_W, a.w), h: Math.max(MIN_H, a.h) } : w)) };
     case "roll":
       return { ...s, wins: s.wins.map((w) => (w.id === a.id ? { ...w, rolled: !w.rolled } : w)) };
   }

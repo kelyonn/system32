@@ -81,6 +81,7 @@ function Content({ id, open, close }: { id: string; open: (id: string) => void; 
 
 function Window({ w, focused, d, open }: { w: Win; focused: boolean; d: React.Dispatch<import("./windows").Action>; open: (id: string) => void }) {
   const drag = useRef<{ dx: number; dy: number } | null>(null);
+  const size = useRef<{ x: number; y: number; w: number; h: number } | null>(null);
   const close = () => { sound.click(); d({ t: "close", id: w.id }); };
   return (
     <section
@@ -109,6 +110,26 @@ function Window({ w, focused, d, open }: { w: Win; focused: boolean; d: React.Di
         <span className="stripes" aria-hidden />
       </header>
       {!w.rolled && <div className="body">{<Content id={w.id} open={open} close={close} />}</div>}
+      {!w.rolled && (
+        <span
+          className="grip"
+          role="separator"
+          aria-label={`Resize ${w.title}`}
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            d({ t: "focus", id: w.id });
+            size.current = { x: e.clientX, y: e.clientY, w: w.w, h: w.h };
+            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+          }}
+          onPointerMove={(e) => {
+            if (!size.current) return;
+            const maxW = window.innerWidth - w.x - 4;
+            const maxH = window.innerHeight - w.y - 4;
+            d({ t: "resize", id: w.id, w: Math.min(maxW, size.current.w + e.clientX - size.current.x), h: Math.min(maxH, size.current.h + e.clientY - size.current.y) });
+          }}
+          onPointerUp={() => (size.current = null)}
+        />
+      )}
     </section>
   );
 }
