@@ -21,15 +21,19 @@ export const metadata: Metadata = {
 // looks and behaves like it does on a laptop. Portrait keeps the compact phone layout, and
 // /simple stays a normal responsive page.
 const phoneViewport = `(function(){try{
-if(/\/simple\/?$/.test(location.pathname))return;
-var m=document.querySelector('meta[name=viewport]');
-if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}
+if(/\\/simple\\/?$/.test(location.pathname))return;
 var land=matchMedia('(orientation: landscape)');
 function set(){
 var phone=matchMedia('(pointer: coarse)').matches&&Math.min(screen.width,screen.height)<700;
-m.content=phone&&land.matches?'width=1100':'width=device-width, initial-scale=1';
+var v=phone&&land.matches?'width=1100':'width=device-width, initial-scale=1';
+var tags=document.querySelectorAll('meta[name=viewport]');
+if(!tags.length){var m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);tags=[m];}
+for(var i=0;i<tags.length;i++)if(tags[i].content!==v)tags[i].content=v;
 }
 set();
+new MutationObserver(set).observe(document.head,{childList:true,subtree:true,attributes:true,attributeFilter:['content']});
+document.addEventListener('DOMContentLoaded',set);
+addEventListener('load',set);
 if(land.addEventListener)land.addEventListener('change',set);
 addEventListener('orientationchange',set);
 }catch(e){}})();`;

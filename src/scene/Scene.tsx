@@ -153,7 +153,7 @@ function CameraRig({ stage, orbit, instant, onArrive }: { stage: 0 | 1 | 2; orbi
   const target = useMemo(() => new THREE.Vector3(...ORBIT_TARGET), []);
   // Portrait screens (phones) pull the camera back so the desk still fits across the narrow width.
   const aspectNow = size.width / size.height;
-  const fitWide = Math.min(2, Math.max(1, 1.2 / aspectNow));
+  const fitWide = Math.min(2, Math.max(0.85, 1.2 / aspectNow));
   const fitHome = Math.min(2.3, Math.max(1, 1.0 / aspectNow));
   const prevFit = useRef(1);
   useEffect(() => {
