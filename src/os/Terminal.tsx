@@ -39,7 +39,18 @@ function run(input: string, onOpen: (id: string) => void, onExit: () => void): L
         FILES.slice(r * 4, r * 4 + 4).flatMap((f) => [{ text: f.name.padEnd(20), open: f.open }]),
       );
     case "whoami":
-      return [t(site.person.name), t(site.person.role)];
+      return [t(`${site.person.name} (${site.person.handle})`), t(site.person.tagline), t(site.person.status)];
+    case "resume":
+      onOpen("resume");
+      return [t("opening resume")];
+    case "contact":
+      return [t(site.person.email), ...site.links.map((l) => t(l.display))];
+    case "now": {
+      const d = site.docs.find((d) => d.id === "now");
+      return d ? docLines(d.blocks).map(t) : [];
+    }
+    case "hire":
+      return [t(site.person.status), t(site.person.email)];
     case "projects":
       return site.projects.map((p) => [{ text: p.name.padEnd(14), open: `project:${p.id}` }, { text: p.summary }]);
     case "open": {

@@ -6,8 +6,8 @@ import "./globals.css";
 const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kelyonn.github.io";
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const url = `${origin}${base}/`;
-const title = `${site.person.name} | Backend and systems engineer`;
-const description = `${site.person.name}, ${site.person.role}. Container runtimes, GitOps tooling and small tools for real problems. Explore the desk.`;
+const title = `${site.person.name} | Tech and product`;
+const description = `${site.person.name}, ${site.person.role}. ${site.person.status} Container runtimes, GitOps tooling and small tools for real problems. Explore the desk.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(origin),

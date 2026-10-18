@@ -14,6 +14,7 @@ export function SimpleView() {
         <p className="simple-kicker">{person.role}</p>
         <h1 className="simple-name">{person.name}</h1>
         <p className="simple-tagline">{person.tagline}</p>
+        <p className="simple-status">{person.status}</p>
         <nav aria-label="Links" className="simple-links">
           {links.map((l) => (
             <a key={l.href} href={l.href} rel="noopener">

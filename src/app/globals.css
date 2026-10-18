@@ -15,7 +15,8 @@ a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .simple { max-width: 42rem; margin: 0 auto; padding: 4rem 1rem 6rem; }
 .simple-kicker { font-family: var(--mono); font-size: 0.8rem; margin: 0; }
 .simple-name { font-family: var(--display); font-weight: 700; font-size: clamp(1.75rem, 7vw, 2.75rem); line-height: 1.15; margin: 0.75rem 0; }
-.simple-tagline { font-size: 1.15rem; margin: 0 0 1.25rem; }
+.simple-tagline { font-size: 1.15rem; margin: 0 0 0.4rem; }
+.simple-status { margin: 0 0 1.25rem; opacity: 0.75; }
 .simple-links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; font-family: var(--mono); font-size: 0.85rem; }
 .simple h2 { font-family: var(--display); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 2px solid var(--ink); padding-bottom: 0.4rem; margin: 3.5rem 0 1.25rem; }
 .simple-projects { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.75rem; }
