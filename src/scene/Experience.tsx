@@ -236,7 +236,7 @@ export function Experience() {
         </div>
       )}
 
-      <Link href="/simple" className="chip simple-btn">Simple view</Link>
+      {phase !== "booting" && phase !== "os" && <Link href="/simple" className="chip simple-btn">Simple view</Link>}
     </>
   );
 }

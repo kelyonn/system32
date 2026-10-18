@@ -84,3 +84,7 @@
   .win .grip { width: 28px; height: 28px; }
   .term { font-size: 19px; }
 }
+
+.drop a { display: block; height: 26px; line-height: 26px; padding: 0 8px; text-decoration: none; }
+.drop a:hover, .drop a:focus-visible { background: var(--ink); color: var(--paper); outline: none; }
+@media (max-width: 700px) { .ascii-wall .banner { display: none; } }

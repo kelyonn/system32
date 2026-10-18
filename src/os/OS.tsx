@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useReducer, useRef, useState, type ReactNode } from "react";
 import { site } from "@/data/site";
 import { initial, reducer, type Win } from "./windows";
@@ -187,6 +188,7 @@ export function OS({ onShutdown, initialMode = "desktop", initialOpen }: { onShu
             <div className="drop">
               <button onClick={() => setView("desktop")}>{mode === "desktop" ? "* " : "  "}Desktop</button>
               <button onClick={() => setView("terminal")}>{mode === "terminal" ? "* " : "  "}Terminal</button>
+              <Link href="/simple" onClick={() => sound.click()}>{"  "}Simple view</Link>
             </div>
           )}
         </div>
