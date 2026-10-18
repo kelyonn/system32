@@ -77,3 +77,12 @@ body canvas { filter: contrast(1.04) saturate(1.05); }
 
 .h-touch { display: none; }
 @media (pointer: coarse) { .h-mouse { display: none; } .h-touch { display: inline; } }
+
+/* Short windows (a phone sideways without the scaled layout, or a squat browser window) */
+@media (max-height: 520px) {
+  .hud-kicker, .hud-status { display: none; }
+  .hud { top: 10px; left: 10px; width: min(250px, 40vw); padding: 10px 12px 9px; }
+  .hud-name { font-size: 20px; }
+  .hud-tag { font-size: 15px; margin-top: 4px; }
+  .cam-hint { bottom: 56px; font-size: 12px; }
+}
