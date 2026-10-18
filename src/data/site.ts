@@ -95,7 +95,7 @@ export const site = {
     },
     {
       id: "nexus",
-      demo: { src: "/demos/nexus.mp4", poster: "/demos/nexus.jpg", note: "Real runs on a fresh Minikube cluster: one config file, deploy, status, logs, a chaos test and the local dashboard. Waits are sped up." },
+      demo: { src: "/demos/nexus.mp4", poster: "/demos/nexus.jpg", note: "A short promo cut: one file, one command, self-healing and the dashboard. Stylised, not a recording of a live run." },
       name: "Nexus",
       summary: "One config file, one command, a real Kubernetes cluster.",
       why: "I wanted an app running on real Kubernetes without first becoming a Kubernetes expert. It is for the developer who wants to ship, not run a cluster.",
